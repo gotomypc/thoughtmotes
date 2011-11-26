@@ -1,0 +1,50 @@
+h1 {
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+div#tagline {
+  color: #fff;
+  margin-left: 120px;
+  margin-bottom: 60px;
+	text-shadow:  0 1px 0 #000;
+}
+
+#content {
+  height: 150px;
+  width: 100%;
+}
+
+div.ui-body-a {
+  min-height: 441px;
+}
+
+.footerText {
+  color: #fff;
+  font-size: 12px;
+  padding: 5px;
+  text-align: right;
+}
+
+#status {
+  padding: 5px;
+  color: #fff;
+  background: #ccc;
+}
+
+#status.fail {
+  background: #c00;
+}
+
+#status.success {
+  background: #0c0;
+}
+
+#mapcanvas {
+  border: 2px solid #000;
+  height: 300px;
+  width: 310px;
+}

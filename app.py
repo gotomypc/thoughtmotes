@@ -64,8 +64,8 @@ def initDB():
     g.db.thoughtmotes.motes.create_index([("loc", GEO2D)])
 
 def splitMongoURI(uri):
-    [user, pw, host, port, db] = re.findall("^.*://(.*?):(.*?)@(.*?):(\d+)/(.*)$", uri)
-    logging.debug(user + " " + pw + " " + host + " " + port + " " + db)
+    print(re.findall("^.*://(.*?):(.*?)@(.*?):(\d+)/(.*)$", uri))
+    #logging.debug(user + " " + pw + " " + host + " " + port + " " + db)
 
 # launch application
 

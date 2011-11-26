@@ -7,6 +7,7 @@ from pymongo import Connection, GEO2D
 DEBUG = True
 SECRET_KEY = 'This should be better'
 MONGODB_CONNSTRING = 'mongodb://localhost:27017'
+MONGODB_DB = 'thoughtmotes'
 
         
 # application
@@ -33,7 +34,7 @@ def addMote():
                 'likecount' : 0,
                 'flagcount' : 0
             }
-    g.db.thoughtmotes.motes.insert(mote)
+    g.db.motes.insert(mote)
     flash('Your thoughts have been set free.')
     return redirect(url_for('index'))
 
@@ -46,7 +47,8 @@ def motesNearby():
 
 @app.before_request
 def beforeRequest():
-    g.db = connectDB()
+    mongo = connectDB()
+    g.db = mongo[app.config['MONGODB_DB']]
     initDB()
 
 @app.teardown_request
@@ -60,12 +62,14 @@ def connectDB():
     return Connection(app.config['MONGODB_CONNSTRING'])
 
 def initDB():
-    g.db.thoughtmotes.motes.create_index("handle")
-    g.db.thoughtmotes.motes.create_index([("loc", GEO2D)])
+    g.db.motes.create_index("handle")
+    g.db.motes.create_index([("loc", GEO2D)])
 
-def splitMongoURI(uri):
-    print(re.findall("^.*://(.*?):(.*?)@(.*?):(\d+)/(.*)$", uri))
-    #logging.debug(user + " " + pw + " " + host + " " + port + " " + db)
+def parseMongoURI(uri):
+    """Parse the MongoHQ connection string and grab the DB name"""
+    [[user, pw, host, port, db]] = re.findall("^.*://(.*?):(.*?)@(.*?):(\d+)/(.*)$", uri)
+    logging.debug(user + " " + pw + " " + host + " " + port + " " + db)
+    app.config['MONGODB_DB'] = db
 
 # launch application
 
@@ -74,8 +78,8 @@ if __name__=='__main__':
     dbConnString = os.environ.get("MONGOHQ_URL", "")
     logging.debug("Connection string: " + dbConnString)
     if dbConnString != "":
-        logging.debug("Switching to Heroku's mongodb")
-        splitMongoURI(dbConnString)
         app.config['MONGODB_CONNSTRING'] = dbConnString
+        logging.debug("Switching to Heroku's mongodb")
+        parseMongoURI(dbConnString)
     app.run(host='0.0.0.0', port=port)
     

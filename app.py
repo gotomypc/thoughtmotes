@@ -33,7 +33,7 @@ def addMote():
                 'likecount' : 0,
                 'flagcount' : 0
             }
-    g.db.insert(mote)
+    g.db.motes.insert(mote)
     flash('Your thoughts have been set free.')
     return redirect(url_for('index'))
 
@@ -60,8 +60,8 @@ def connectDB():
     return Connection(app.config['MONGODB_CONNSTRING'])
 
 def initDB():
-    g.db.thoughtmotes.motes.create_index("handle")
-    g.db.thoughtmotes.motes.create_index([("loc", GEO2D)])
+    g.db.motes.create_index("handle")
+    g.db.motes.create_index([("loc", GEO2D)])
     
 
 # launch application

@@ -1,4 +1,4 @@
-import os, datetime
+import os, datetime, logging
 from flask import Flask, request, session, g, redirect, url_for, render_template, flash
 from pymongo import Connection, GEO2D
 
@@ -10,7 +10,7 @@ MONGODB_CONNSTRING = 'mongodb://localhost:27017'
 
         
 # application
-
+logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -69,7 +69,9 @@ def initDB():
 if __name__=='__main__':
     port = int(os.environ.get("PORT", 5000))
     dbConnString = os.environ.get("MONGOHQ_URL", "")
+    logging.debug("Connection string: " + dbConnString)
     if dbConnString != "":
+        logging.debug("Switching to Heroku's mongodb")
         app.config['MONGODB_CONNSTRING'] = dbConnString
     app.run(host='0.0.0.0', port=port)
     

@@ -1,4 +1,4 @@
-import os, datetime, logging
+import os, datetime, logging, re
 from flask import Flask, request, session, g, redirect, url_for, render_template, flash
 from pymongo import Connection, GEO2D
 
@@ -33,7 +33,7 @@ def addMote():
                 'likecount' : 0,
                 'flagcount' : 0
             }
-    g.db.motes.insert(mote)
+    g.db.thoughtmotes.motes.insert(mote)
     flash('Your thoughts have been set free.')
     return redirect(url_for('index'))
 
@@ -60,9 +60,12 @@ def connectDB():
     return Connection(app.config['MONGODB_CONNSTRING'])
 
 def initDB():
-    g.db.motes.create_index("handle")
-    g.db.motes.create_index([("loc", GEO2D)])
-    
+    g.db.thoughtmotes.motes.create_index("handle")
+    g.db.thoughtmotes.motes.create_index([("loc", GEO2D)])
+
+def splitMongoURI(uri):
+    [user, pw, host, port, db] = re.findall("^.*://(.*?):(.*?)@(.*?):(\d+)/(.*)$", uri)
+    logging.debug(user + " " + pw + " " + host + " " + port + " " + db)
 
 # launch application
 
@@ -72,6 +75,7 @@ if __name__=='__main__':
     logging.debug("Connection string: " + dbConnString)
     if dbConnString != "":
         logging.debug("Switching to Heroku's mongodb")
+        splitMongoURI(dbConnString)
         app.config['MONGODB_CONNSTRING'] = dbConnString
     app.run(host='0.0.0.0', port=port)
     

@@ -54,7 +54,7 @@
         <article>
           <p>Finding your location: <span id="composeStatus">checking...</span></p>
         </article>
-        <form action="/mote" method="post">
+        <form id="composeForm" action="/mote" method="post">
           <input type="hidden" name="lat" value="" id="lat">
           <input type="hidden" name="long" value="" id="long">
           <textarea id="content" name="content"></textarea>
@@ -86,26 +86,28 @@
 	    $('#lat').val(position.coords.latitude);
       $('#long').val(position.coords.longitude); 
   
-	    var s = document.querySelector('#composeStatus');
+	    var s = $('#composeStatus');
 	    if (s.className == 'success') {
 		    // not sure why we're hitting this twice in FF, I think it's to do with a cached result coming back    
 		    return;
 	    }
-	    s.innerHTML = "found you!";
-	    s.className = 'success';
+	    s.text("found you!");
+	    s.attr("class", "success");
+	    $("#composeForm").show();
     }
 
 	  function composeLocError(msg) {
-	    var s = $('#status');
+	    var s = $('#composeStatus');
 	    s.innerHTML = typeof msg == 'string' ? msg : "failed";
 	    s.className = 'fail';
 
   		// Hide the compose form
-			
+			$("#composeForm").hide();
 	  }
 
 	  // Geolocate when we move to the Compose page
 	  $('#composePage').live('pageinit', function(event){
+			$("#composeForm").hide();
 	    if (navigator.geolocation) {
 	    	navigator.geolocation.getCurrentPosition(composeLocSuccess, composeLocError);
 	    } else {
@@ -117,17 +119,17 @@
     function gatherLocSuccess(position) {
 	    var s = $('#gatherStatus');
   
-	    if (s.className == 'success') {
+	    if (s.attr("class") == 'success') {
 		    // not sure why we're hitting this twice in FF, I think it's to do with a cached result coming back    
 		    return;
 	    }
-	    s.innerHTML = "found you!";
-	    s.className = 'success';
+	    s.text("found you!");
+	    s.attr("class", "success");
   
 	    var mapcanvas = document.createElement('div');
 	    mapcanvas.id = 'mapcanvas';
     
-	    document.querySelector('article').appendChild(mapcanvas);
+	    $('#gather > article').after(mapcanvas);
   
 	    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 	    var myOptions = {
@@ -147,7 +149,7 @@
     }
 
 	  function gatherLocError(msg) {
-	    var s = document.querySelector('#status');
+	    var s = document.querySelector('#gatherStatus');
 	    s.innerHTML = typeof msg == 'string' ? msg : "failed";
 	    s.className = 'fail';
   

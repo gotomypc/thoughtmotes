@@ -34,6 +34,7 @@ def addMote():
                 'likecount' : 0,
                 'flagcount' : 0
             }
+    logging.debug("Inserting: " + str(mote))
     g.db.motes.insert(mote)
     flash('Your thoughts have been set free.')
     return redirect(url_for('index'))

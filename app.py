@@ -47,13 +47,13 @@ def motesNearby():
 
 @app.before_request
 def beforeRequest():
-    mongo = connectDB()
-    g.db = mongo[app.config['MONGODB_DB']]
+    g.conn = connectDB()
+    g.db = g.conn[app.config['MONGODB_DB']]
     initDB()
 
 @app.teardown_request
 def afterRequest(exception):
-    g.db.end_request()
+    g.conn.end_request()
 
 
 # functions
